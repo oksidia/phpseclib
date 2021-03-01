@@ -3435,6 +3435,11 @@ class Net_SSH2
      */
     function _filter($payload, $skip_channel_filter)
     {
+        // FIXME: Temp fix for https://github.com/phpseclib/phpseclib/issues/1471
+        if ($payload === false) {
+            return false;
+        }
+
         switch (ord($payload[0])) {
             case NET_SSH2_MSG_DISCONNECT:
                 $this->_string_shift($payload, 1);
@@ -3470,6 +3475,11 @@ class Net_SSH2
                 }
         }
 
+        // FIXME: Temp fix for https://github.com/phpseclib/phpseclib/issues/1471
+        if ($payload === false) {
+            return false;
+        }
+
         // see http://tools.ietf.org/html/rfc4252#section-5.4; only called when the encryption has been activated and when we haven't already logged in
         if (($this->bitmap & NET_SSH2_MASK_CONNECTED) && !$this->isAuthenticated() && ord($payload[0]) == NET_SSH2_MSG_USERAUTH_BANNER) {
             $this->_string_shift($payload, 1);
@@ -3479,6 +3489,11 @@ class Net_SSH2
             extract(unpack('Nlength', $this->_string_shift($payload, 4)));
             $this->banner_message = $this->_string_shift($payload, $length);
             $payload = $this->_get_binary_packet();
+        }
+
+        // FIXME: Temp fix for https://github.com/phpseclib/phpseclib/issues/1471
+        if ($payload === false) {
+            return false;
         }
 
         // only called when we've already logged in
