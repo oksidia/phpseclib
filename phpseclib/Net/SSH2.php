@@ -3436,7 +3436,7 @@ class Net_SSH2
     function _filter($payload, $skip_channel_filter)
     {
         // FIXME: Temp fix for https://github.com/phpseclib/phpseclib/issues/1471
-        if ($payload === false) {
+        if (!is_string($payload)) {
             return false;
         }
 
@@ -3476,7 +3476,7 @@ class Net_SSH2
         }
 
         // FIXME: Temp fix for https://github.com/phpseclib/phpseclib/issues/1471
-        if ($payload === false) {
+        if (!is_string($payload)) {
             return false;
         }
 
@@ -3492,7 +3492,7 @@ class Net_SSH2
         }
 
         // FIXME: Temp fix for https://github.com/phpseclib/phpseclib/issues/1471
-        if ($payload === false) {
+        if (!is_string($payload)) {
             return false;
         }
 
