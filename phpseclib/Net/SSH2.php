@@ -3471,7 +3471,11 @@ class SSH2
      */
     private function filter($payload, $skip_channel_filter)
     {
-        switch (ord($payload[0])) {
+        // In rare cases, $payload can be a boolean.
+		// Prior to PHP 7.4, true[0] and false[0] silently returned NULL. In PHP 7.4, it also throws a notice.
+		// To avoid throwing a notice here but still keep the pre-PHP 7.4 functionality, we fall back to 0 (return value of ord(NULL)) when $payload is not a string.
+        $ord = is_string($payload) ? ord($payload[0]) : 0;
+        switch ($ord) {
             case NET_SSH2_MSG_DISCONNECT:
                 Strings::shift($payload, 1);
                 list($reason_code, $message) = Strings::unpackSSH2('Ns', $payload);
@@ -3508,7 +3512,8 @@ class SSH2
 
         // only called when we've already logged in
         if (($this->bitmap & self::MASK_CONNECTED) && $this->isAuthenticated()) {
-            switch (ord($payload[0])) {
+            $ord = is_string($payload) ? ord($payload[0]) : 0;
+            switch ($ord) {
                 case NET_SSH2_MSG_CHANNEL_REQUEST:
                     if (strlen($payload) == 31) {
                         extract(unpack('cpacket_type/Nchannel/Nlength', $payload));
